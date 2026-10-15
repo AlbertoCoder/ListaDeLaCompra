@@ -6,8 +6,6 @@ on:
 
 jobs:
   build:
-    # Fijado a 24.04 para no cambiar de versión de Ubuntu sin avisar
-    # (ubuntu-latest pasa a Ubuntu 26 el 19/10/2026).
     runs-on: ubuntu-24.04
 
     steps:
@@ -20,12 +18,17 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # El runner ya incluye el Android SDK (ANDROID_HOME), así que no hace falta
-      # la acción android-actions/setup-android.
       - name: Install SDK platform and build tools
         run: |
-          yes | sdkmanager --licenses > /dev/null
-          sdkmanager "platforms;android-34" "build-tools;34.0.0"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMANAGER=$(find "$ANDROID_HOME" -path '*cmdline-tools*' -name sdkmanager -type f | head -n 1)
+          if [ -z "$SDKMANAGER" ]; then
+            echo "No se encontró sdkmanager en $ANDROID_HOME"
+            exit 1
+          fi
+          echo "Usando $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null
+          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Set up Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
