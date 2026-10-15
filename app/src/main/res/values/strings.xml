@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lista De La Compra</string>
+
+    <string name="hint_buscar">Buscar producto, sección o supermercado</string>
+    <string name="col_producto">Producto</string>
+    <string name="col_seccion">Sección</string>
+    <string name="col_supermercado">Supermercado</string>
+    <string name="col_comprar">Comprar</string>
+
+    <string name="todas_secciones">Todas las secciones</string>
+    <string name="sin_seccion">(Sin sección)</string>
+    <string name="sin_resultados">No hay productos que mostrar.\nPulsa + para añadir uno.</string>
+    <string name="resumen">%1$d productos · %2$d por comprar</string>
+
+    <string name="gestionar_secciones">Secciones y supermercados</string>
+    <string name="desmarcar_todos">Desmarcar todos</string>
+    <string name="todos_desmarcados">Todos los productos desmarcados</string>
+
+    <string name="nuevo_producto">Nuevo producto</string>
+    <string name="editar_producto">Editar producto</string>
+    <string name="eliminar_producto">Eliminar producto</string>
+    <string name="confirmar_eliminar">¿Eliminar \"%1$s\" de la lista?</string>
+    <string name="hint_nombre">Nombre del producto</string>
+    <string name="etiqueta_comprar">Marcar para comprar</string>
+    <string name="nombre_obligatorio">Escribe el nombre del producto</string>
+
+    <string name="nueva_seccion">Nueva sección</string>
+    <string name="editar_seccion">Editar sección</string>
+    <string name="eliminar_seccion">Eliminar sección</string>
+    <string name="confirmar_eliminar_seccion">¿Eliminar \"%1$s\"? Los productos asociados quedarán sin sección.</string>
+    <string name="hint_seccion">Sección (p. ej. Frutería)</string>
+    <string name="hint_supermercado">Supermercado (p. ej. Mercadona)</string>
+    <string name="campo_obligatorio">Campo obligatorio</string>
+    <string name="sin_secciones">No hay secciones.\nPulsa + para crear una.</string>
+
+    <string name="guardar">Guardar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="cd_eliminar">Eliminar producto</string>
+    <string name="cd_anadir">Añadir</string>
+
+    <string-array name="filtro_estado">
+        <item>Todos</item>
+        <item>Por comprar</item>
+        <item>Comprados</item>
+    </string-array>
+</resources>
