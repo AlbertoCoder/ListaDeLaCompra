@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_supermercados"
+        android:title="@string/menu_supermercados"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_secciones"
         android:title="@string/gestionar_secciones"
         app:showAsAction="never" />
@@ -12,5 +16,13 @@
     <item
         android:id="@+id/action_desmarcar"
         android:title="@string/desmarcar_todos"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_exportar"
+        android:title="@string/menu_exportar"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_importar"
+        android:title="@string/menu_importar"
         app:showAsAction="never" />
 </menu>

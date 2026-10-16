@@ -11,23 +11,34 @@
     <string name="todas_secciones">Todas las secciones</string>
     <string name="todos_supermercados">Todos los supermercados</string>
     <string name="sin_seccion">(Sin sección)</string>
+    <string name="sin_supermercado">(Sin supermercado)</string>
     <string name="sin_resultados">No hay productos que mostrar.\nPulsa + para añadir uno.</string>
     <string name="resumen">%1$d por comprar · %2$d ya comprados</string>
 
+    <string name="menu_supermercados">Supermercados</string>
     <string name="gestionar_secciones">Secciones</string>
-    <string name="desmarcar_todos">Desmarcar todos (ya comprados)</string>
     <string name="marcar_todos">Marcar todos para comprar</string>
-    <string name="todos_desmarcados">Todos los productos marcados como comprados</string>
+    <string name="desmarcar_todos">Desmarcar todos (ya comprados)</string>
+    <string name="menu_exportar">Exportar base de datos</string>
+    <string name="menu_importar">Importar base de datos</string>
     <string name="todos_marcados">Todos los productos marcados para comprar</string>
+    <string name="todos_desmarcados">Todos los productos marcados como comprados</string>
 
     <string name="nuevo_producto">Nuevo producto</string>
     <string name="editar_producto">Editar producto</string>
     <string name="eliminar_producto">Eliminar producto</string>
     <string name="confirmar_eliminar">¿Eliminar \"%1$s\" de la lista?</string>
     <string name="hint_nombre">Nombre del producto</string>
-    <string name="hint_supermercado">Supermercado (escribe uno nuevo o elige uno)</string>
     <string name="etiqueta_comprar">Marcar para comprar</string>
     <string name="nombre_obligatorio">Escribe el nombre del producto</string>
+
+    <string name="nuevo_supermercado">Nuevo supermercado</string>
+    <string name="editar_supermercado">Editar supermercado</string>
+    <string name="eliminar_supermercado">Eliminar supermercado</string>
+    <string name="confirmar_eliminar_supermercado">¿Eliminar \"%1$s\"? Los productos asociados quedarán sin supermercado.</string>
+    <string name="hint_nombre_supermercado">Nombre del supermercado (p. ej. Mercadona)</string>
+    <string name="ya_existe_supermercado">Ya existe un supermercado con ese nombre</string>
+    <string name="sin_supermercados">No hay supermercados.\nPulsa + para crear uno.</string>
 
     <string name="nueva_seccion">Nueva sección</string>
     <string name="editar_seccion">Editar sección</string>
@@ -40,6 +51,13 @@
     <string name="nota_color_fuente">El color de la letra (blanco o negro) se elige solo para que se lea bien sobre el fondo.</string>
     <string name="campo_obligatorio">Campo obligatorio</string>
     <string name="sin_secciones">No hay secciones.\nPulsa + para crear una.</string>
+
+    <string name="titulo_importar">Importar base de datos</string>
+    <string name="confirmar_importar">Los datos actuales se reemplazarán por los del archivo seleccionado. ¿Continuar?</string>
+    <string name="continuar">Continuar</string>
+    <string name="exportar_ok">Base de datos exportada correctamente</string>
+    <string name="importar_ok">Base de datos importada correctamente</string>
+    <string name="error_operacion">Error: %1$s</string>
 
     <string name="guardar">Guardar</string>
     <string name="cancelar">Cancelar</string>

@@ -3,7 +3,8 @@ package com.example.listacompra;
 public class Producto {
     private final long id;
     private final String nombre;
-    private boolean comprar;
+    private boolean comprar;             // true = por comprar, false = ya comprado
+    private final long idSupermercado;   // 0 = sin supermercado
     private final String supermercado;   // puede ser null
     private final long idSeccion;        // 0 = sin sección
     private final String seccion;        // puede ser null
@@ -11,12 +12,14 @@ public class Producto {
     private final int colorFin;
     private final int colorFuente;
 
-    public Producto(long id, String nombre, boolean comprar, String supermercado,
+    public Producto(long id, String nombre, boolean comprar,
+                    long idSupermercado, String supermercado,
                     long idSeccion, String seccion,
                     int colorInicio, int colorFin, int colorFuente) {
         this.id = id;
         this.nombre = nombre;
         this.comprar = comprar;
+        this.idSupermercado = idSupermercado;
         this.supermercado = supermercado;
         this.idSeccion = idSeccion;
         this.seccion = seccion;
@@ -29,6 +32,7 @@ public class Producto {
     public String getNombre() { return nombre; }
     public boolean isComprar() { return comprar; }
     public void setComprar(boolean comprar) { this.comprar = comprar; }
+    public long getIdSupermercado() { return idSupermercado; }
     public String getSupermercado() { return supermercado; }
     public long getIdSeccion() { return idSeccion; }
     public String getSeccion() { return seccion; }

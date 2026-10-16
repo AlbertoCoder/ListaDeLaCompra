@@ -22,6 +22,11 @@
             android:name=".SeccionesActivity"
             android:label="@string/gestionar_secciones"
             android:exported="false" />
+
+        <activity
+            android:name=".SupermercadosActivity"
+            android:label="@string/menu_supermercados"
+            android:exported="false" />
     </application>
 
 </manifest>

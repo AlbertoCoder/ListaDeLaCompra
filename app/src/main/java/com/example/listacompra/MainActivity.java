@@ -1,6 +1,7 @@
 package com.example.listacompra;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,32 +10,42 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ProductoAdapter.Listener {
+public class MainActivity extends AppCompatActivity implements TablaProductos.Listener {
 
     private DatabaseHelper db;
-    private ProductoAdapter adapter;
-    private RecyclerView recycler;
+    private TablaProductos tabla;
+    private LinearLayout tablaContenido;
+    private View scrollTabla;
     private EditText etBuscar;
     private Spinner spSupermercado, spSeccion, spEstado;
     private TextView tvVacio, tvResumen;
 
-    private long filtroSeccionId = -1;         // -1 = todas
-    private String filtroSupermercado = null;  // null = todos
+    private long filtroSeccionId = -1;        // -1 = todas
+    private long filtroSupermercadoId = -1;   // -1 = todos
+
+    private final ActivityResultLauncher<String> exportarLauncher = registerForActivityResult(
+            new ActivityResultContracts.CreateDocument("application/octet-stream"),
+            uri -> { if (uri != null) exportar(uri); });
+
+    private final ActivityResultLauncher<String[]> importarLauncher = registerForActivityResult(
+            new ActivityResultContracts.OpenDocument(),
+            uri -> { if (uri != null) confirmarImportacion(uri); });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +60,10 @@ public class MainActivity extends AppCompatActivity implements ProductoAdapter.L
         spEstado = findViewById(R.id.spEstado);
         tvVacio = findViewById(R.id.tvVacio);
         tvResumen = findViewById(R.id.tvResumen);
-        recycler = findViewById(R.id.recycler);
+        scrollTabla = findViewById(R.id.scrollTabla);
+        tablaContenido = findViewById(R.id.tablaContenido);
 
-        adapter = new ProductoAdapter(this);
-        recycler.setLayoutManager(new LinearLayoutManager(this));
-        recycler.setAdapter(adapter);
+        tabla = new TablaProductos(this, tablaContenido, this);
 
         spEstado.setAdapter(ArrayAdapter.createFromResource(this,
                 R.array.filtro_estado, android.R.layout.simple_spinner_dropdown_item));
@@ -64,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements ProductoAdapter.L
                 if (parent == spSeccion) {
                     filtroSeccionId = ((Seccion) parent.getItemAtPosition(position)).getId();
                 } else if (parent == spSupermercado) {
-                    filtroSupermercado = position == 0 ? null : (String) parent.getItemAtPosition(position);
+                    filtroSupermercadoId = ((Supermercado) parent.getItemAtPosition(position)).getId();
                 }
                 cargarProductos();
             }
@@ -117,30 +127,37 @@ public class MainActivity extends AppCompatActivity implements ProductoAdapter.L
         spSeccion.setSelection(posSeccion);
         filtroSeccionId = secciones.get(posSeccion).getId();
 
-        List<String> supers = new ArrayList<>();
-        supers.add(getString(R.string.todos_supermercados));
+        List<Supermercado> supers = new ArrayList<>();
+        supers.add(new Supermercado(-1, getString(R.string.todos_supermercados)));
         supers.addAll(db.getSupermercados());
 
-        int posSuper = filtroSupermercado == null ? 0 : supers.indexOf(filtroSupermercado);
-        if (posSuper < 0) posSuper = 0;
+        int posSuper = 0;
+        for (int i = 0; i < supers.size(); i++) {
+            if (supers.get(i).getId() == filtroSupermercadoId) {
+                posSuper = i;
+                break;
+            }
+        }
         spSupermercado.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, supers));
         spSupermercado.setSelection(posSuper);
-        filtroSupermercado = posSuper == 0 ? null : supers.get(posSuper);
+        filtroSupermercadoId = supers.get(posSuper).getId();
     }
 
     private void cargarProductos() {
         List<Producto> lista = db.getProductos(
                 etBuscar.getText().toString().trim(),
                 filtroSeccionId,
-                filtroSupermercado,
+                filtroSupermercadoId,
                 spEstado.getSelectedItemPosition());
-        adapter.setDatos(lista);
+
+        tabla.mostrar(lista);
+        scrollTabla.setVisibility(lista.isEmpty() ? View.GONE : View.VISIBLE);
+        tvVacio.setVisibility(lista.isEmpty() ? View.VISIBLE : View.GONE);
 
         int porComprar = 0;
         for (Producto p : lista) if (p.isComprar()) porComprar++;
         tvResumen.setText(getString(R.string.resumen, porComprar, lista.size() - porComprar));
-        tvVacio.setVisibility(lista.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
     // ---------------- Menú ----------------
@@ -154,30 +171,72 @@ public class MainActivity extends AppCompatActivity implements ProductoAdapter.L
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_secciones) {
+        if (id == R.id.action_supermercados) {
+            startActivity(new Intent(this, SupermercadosActivity.class));
+            return true;
+        } else if (id == R.id.action_secciones) {
             startActivity(new Intent(this, SeccionesActivity.class));
             return true;
         } else if (id == R.id.action_marcar) {
-            db.marcarTodos(true);            // todo vuelve a "por comprar" (p. ej. para una nueva lista)
+            db.marcarTodos(true);
             cargarProductos();
             Toast.makeText(this, R.string.todos_marcados, Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_desmarcar) {
-            db.marcarTodos(false);           // todo queda "ya comprado"
+            db.marcarTodos(false);
             cargarProductos();
             Toast.makeText(this, R.string.todos_desmarcados, Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id == R.id.action_exportar) {
+            exportarLauncher.launch(DatabaseHelper.DB_NAME);
+            return true;
+        } else if (id == R.id.action_importar) {
+            importarLauncher.launch(new String[]{"*/*"});
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    // ---------------- Callbacks del adaptador ----------------
+    // ---------------- Exportar / importar ----------------
+
+    private void exportar(Uri destino) {
+        try {
+            BackupDb.exportar(this, db, destino);
+            Toast.makeText(this, R.string.exportar_ok, Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(this, getString(R.string.error_operacion, e.getMessage()),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void confirmarImportacion(Uri origen) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.titulo_importar)
+                .setMessage(R.string.confirmar_importar)
+                .setPositiveButton(R.string.continuar, (d, w) -> importar(origen))
+                .setNegativeButton(R.string.cancelar, null)
+                .show();
+    }
+
+    private void importar(Uri origen) {
+        try {
+            BackupDb.importar(this, db, origen);
+            Toast.makeText(this, R.string.importar_ok, Toast.LENGTH_LONG).show();
+            cargarFiltros();
+            cargarProductos();
+        } catch (IOException e) {
+            Toast.makeText(this, getString(R.string.error_operacion, e.getMessage()),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // ---------------- Callbacks de la tabla ----------------
 
     @Override
     public void onComprarCambiado(Producto p, boolean comprar) {
         db.setComprar(p.getId(), comprar);
         p.setComprar(comprar);
-        recycler.post(this::cargarProductos); // reordena tras terminar el layout actual
+        tablaContenido.post(this::cargarProductos); // reordena tras terminar el layout actual
     }
 
     @Override
@@ -203,29 +262,35 @@ public class MainActivity extends AppCompatActivity implements ProductoAdapter.L
     private void mostrarDialogoProducto(Producto existente) {
         View vista = getLayoutInflater().inflate(R.layout.dialog_producto, null);
         EditText etNombre = vista.findViewById(R.id.etNombre);
-        AutoCompleteTextView acSuper = vista.findViewById(R.id.acSupermercado);
-        Spinner spSec = vista.findViewById(R.id.spSeccionDialogo);
+        Spinner spSuperDialogo = vista.findViewById(R.id.spSupermercadoDialogo);
+        Spinner spSecDialogo = vista.findViewById(R.id.spSeccionDialogo);
         CheckBox cb = vista.findViewById(R.id.cbComprarDialogo);
 
-        // Sugerencias de supermercados existentes; también se puede escribir uno nuevo
-        acSuper.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_dropdown_item_1line, db.getSupermercados()));
-        acSuper.setThreshold(0);
+        List<Supermercado> supers = new ArrayList<>();
+        supers.add(new Supermercado(0, getString(R.string.sin_supermercado)));
+        supers.addAll(db.getSupermercados());
+        spSuperDialogo.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, supers));
 
-        List<Seccion> opciones = new ArrayList<>();
-        opciones.add(new Seccion(0, getString(R.string.sin_seccion), 0, 0, 0));
-        opciones.addAll(db.getSecciones());
-        spSec.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, opciones));
+        List<Seccion> secciones = new ArrayList<>();
+        secciones.add(new Seccion(0, getString(R.string.sin_seccion), 0, 0, 0));
+        secciones.addAll(db.getSecciones());
+        spSecDialogo.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, secciones));
 
         if (existente != null) {
             etNombre.setText(existente.getNombre());
             etNombre.setSelection(etNombre.getText().length());
-            if (existente.getSupermercado() != null) acSuper.setText(existente.getSupermercado());
             cb.setChecked(existente.isComprar());
-            for (int i = 0; i < opciones.size(); i++) {
-                if (opciones.get(i).getId() == existente.getIdSeccion()) {
-                    spSec.setSelection(i);
+            for (int i = 0; i < supers.size(); i++) {
+                if (supers.get(i).getId() == existente.getIdSupermercado()) {
+                    spSuperDialogo.setSelection(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < secciones.size(); i++) {
+                if (secciones.get(i).getId() == existente.getIdSeccion()) {
+                    spSecDialogo.setSelection(i);
                     break;
                 }
             }
@@ -247,13 +312,13 @@ public class MainActivity extends AppCompatActivity implements ProductoAdapter.L
                         etNombre.setError(getString(R.string.nombre_obligatorio));
                         return;
                     }
-                    String supermercado = acSuper.getText().toString().trim();
-                    long idSeccion = ((Seccion) spSec.getSelectedItem()).getId();
+                    long idSuper = ((Supermercado) spSuperDialogo.getSelectedItem()).getId();
+                    long idSeccion = ((Seccion) spSecDialogo.getSelectedItem()).getId();
                     if (existente == null) {
-                        db.insertarProducto(nombre, cb.isChecked(), supermercado, idSeccion);
+                        db.insertarProducto(nombre, cb.isChecked(), idSuper, idSeccion);
                     } else {
                         db.actualizarProducto(existente.getId(), nombre, cb.isChecked(),
-                                supermercado, idSeccion);
+                                idSuper, idSeccion);
                     }
                     cargarProductos();
                     dialogo.dismiss();

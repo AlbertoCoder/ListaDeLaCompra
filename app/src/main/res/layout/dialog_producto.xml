@@ -16,15 +16,11 @@
         android:inputType="textCapSentences"
         android:maxLines="1" />
 
-    <AutoCompleteTextView
-        android:id="@+id/acSupermercado"
+    <Spinner
+        android:id="@+id/spSupermercadoDialogo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="@string/hint_supermercado"
-        android:importantForAutofill="no"
-        android:inputType="textCapWords"
-        android:maxLines="1" />
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp" />
 
     <Spinner
         android:id="@+id/spSeccionDialogo"
