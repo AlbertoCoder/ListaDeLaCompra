@@ -306,8 +306,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (estado == 1) sql.append(" AND p.comprar = 1");
         else if (estado == 2) sql.append(" AND p.comprar = 0");
 
-        // Lo que falta por comprar arriba; lo ya comprado abajo
-        sql.append(" ORDER BY p.comprar DESC, p.nombre_producto COLLATE NOCASE ASC");
+        // Agrupado por sección (alfabético); dentro, lo pendiente arriba y luego por nombre
+        sql.append(" ORDER BY s.seccion COLLATE NOCASE ASC, "
+                + "p.comprar DESC, p.nombre_producto COLLATE NOCASE ASC");
 
         List<Producto> lista = new ArrayList<>();
         try (Cursor c = getReadableDatabase().rawQuery(sql.toString(),

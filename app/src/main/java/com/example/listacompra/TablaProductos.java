@@ -91,18 +91,18 @@ public class TablaProductos {
         }
 
         int[] anchos = {
+                dp(ANCHO_COMPRAR_DP),
                 Math.max(dp(MIN_ANCHO_TEXTO_DP), Math.round(nombre) + dp(PADDING_TEXTO_DP)),
                 Math.max(dp(MIN_ANCHO_TEXTO_DP), Math.round(super_) + dp(PADDING_TEXTO_DP)),
                 Math.max(dp(MIN_ANCHO_TEXTO_DP), Math.round(secc) + dp(PADDING_TEXTO_DP)),
-                dp(ANCHO_COMPRAR_DP),
                 dp(ANCHO_ELIMINAR_DP)
         };
 
-        // Si las columnas no llenan la pantalla, la primera se ensancha
+        // Si las columnas no llenan la pantalla, la de producto se ensancha
         int total = 0;
         for (int a : anchos) total += a;
         int pantalla = ctx.getResources().getDisplayMetrics().widthPixels;
-        if (total < pantalla) anchos[0] += pantalla - total;
+        if (total < pantalla) anchos[1] += pantalla - total;
         return anchos;
     }
 
@@ -115,10 +115,10 @@ public class TablaProductos {
         fila.setBackgroundColor(COLOR_CABECERA);
         fila.setLayoutParams(new LinearLayout.LayoutParams(total, dp(ALTO_CABECERA_DP)));
 
-        fila.addView(celda(ctx.getString(R.string.col_producto), anchos[0], 14, COLOR_CABECERA_TEXTO, true));
-        fila.addView(celda(ctx.getString(R.string.col_supermercado), anchos[1], 14, COLOR_CABECERA_TEXTO, true));
-        fila.addView(celda(ctx.getString(R.string.col_seccion), anchos[2], 14, COLOR_CABECERA_TEXTO, true));
-        fila.addView(celda(ctx.getString(R.string.col_comprar), anchos[3], 14, COLOR_CABECERA_TEXTO, true));
+        fila.addView(celda(ctx.getString(R.string.col_comprar), anchos[0], 14, COLOR_CABECERA_TEXTO, true));
+        fila.addView(celda(ctx.getString(R.string.col_producto), anchos[1], 14, COLOR_CABECERA_TEXTO, true));
+        fila.addView(celda(ctx.getString(R.string.col_supermercado), anchos[2], 14, COLOR_CABECERA_TEXTO, true));
+        fila.addView(celda(ctx.getString(R.string.col_seccion), anchos[3], 14, COLOR_CABECERA_TEXTO, true));
         fila.addView(celda("", anchos[4], 14, COLOR_CABECERA_TEXTO, true));
         return fila;
     }
@@ -133,24 +133,22 @@ public class TablaProductos {
         fila.setLayoutParams(new LinearLayout.LayoutParams(total, dp(ALTO_FILA_DP)));
         fila.setBackgroundColor(pendiente ? COLOR_PENDIENTE : COLOR_NORMAL);
 
-        TextView tvNombre = celda(p.getNombre(), anchos[0], 15, colorTexto, false);
+        // Casilla centrada en su columna
+        CheckBox cb = new CheckBox(ctx);
+        cb.setChecked(pendiente);
+
+        TextView tvNombre = celda(p.getNombre(), anchos[1], 15, colorTexto, false);
         TextView tvSuper = celda(p.getSupermercado() == null ? "—" : p.getSupermercado(),
-                anchos[1], 13, colorTexto, false);
+                anchos[2], 13, colorTexto, false);
         TextView tvSeccion = celda(p.getSeccion() == null ? "—" : p.getSeccion(),
-                anchos[2], 13, COLOR_TEXTO, true);
+                anchos[3], 13, COLOR_TEXTO, true);
         if (p.getIdSeccion() > 0) {
             tvSeccion.setBackground(ColorUtil.degradado(p.getColorInicio(), p.getColorFin(), 0f));
             tvSeccion.setTextColor(p.getColorFuente());
         } else {
             tvSeccion.setBackgroundColor(COLOR_SIN_SECCION);
         }
-        fila.addView(tvNombre);
-        fila.addView(tvSuper);
-        fila.addView(tvSeccion);
 
-        // Casilla centrada en su columna
-        CheckBox cb = new CheckBox(ctx);
-        cb.setChecked(pendiente);
         cb.setOnCheckedChangeListener((btn, checked) -> {
             // Marcado = por comprar (verde); desmarcado = ya comprado (normal)
             fila.setBackgroundColor(checked ? COLOR_PENDIENTE : COLOR_NORMAL);
@@ -165,7 +163,11 @@ public class TablaProductos {
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 Gravity.CENTER));
         fila.addView(contCheck, new LinearLayout.LayoutParams(
-                anchos[3], LinearLayout.LayoutParams.MATCH_PARENT));
+                anchos[0], LinearLayout.LayoutParams.MATCH_PARENT));
+
+        fila.addView(tvNombre);
+        fila.addView(tvSuper);
+        fila.addView(tvSeccion);
 
         // Icono de eliminar
         ImageButton btnEliminar = new ImageButton(ctx);
