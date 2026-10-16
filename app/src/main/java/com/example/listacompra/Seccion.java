@@ -1,24 +1,26 @@
 package com.example.listacompra;
 
 public class Seccion {
-    private long id;
-    private String seccion;
-    private String supermercado;
+    private final long id;
+    private final String nombre;
+    private final int colorInicio;
+    private final int colorFin;
+    private final int colorFuente;
 
-    public Seccion(long id, String seccion, String supermercado) {
+    public Seccion(long id, String nombre, int colorInicio, int colorFin, int colorFuente) {
         this.id = id;
-        this.seccion = seccion;
-        this.supermercado = supermercado;
+        this.nombre = nombre;
+        this.colorInicio = colorInicio;
+        this.colorFin = colorFin;
+        this.colorFuente = colorFuente;
     }
 
     public long getId() { return id; }
-    public String getSeccion() { return seccion; }
-    public String getSupermercado() { return supermercado; }
+    public String getSeccion() { return nombre; }
+    public int getColorInicio() { return colorInicio; }
+    public int getColorFin() { return colorFin; }
+    public int getColorFuente() { return colorFuente; }
 
-    /** Texto que se muestra en los Spinner y listas. */
     @Override
-    public String toString() {
-        if (supermercado == null || supermercado.isEmpty()) return seccion;
-        return seccion + " · " + supermercado;
-    }
+    public String toString() { return nombre; }
 }

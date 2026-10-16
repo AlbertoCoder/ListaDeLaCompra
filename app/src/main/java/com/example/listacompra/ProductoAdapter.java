@@ -1,6 +1,6 @@
 package com.example.listacompra;
 
-import android.graphics.Paint;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +21,11 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.VH> {
         void onEditar(Producto p);
         void onEliminar(Producto p);
     }
+
+    private static final int COLOR_FILA_NORMAL = Color.WHITE;
+    private static final int COLOR_FILA_PENDIENTE = Color.parseColor("#2E7D32");
+    private static final int COLOR_TEXTO = Color.parseColor("#212121");
+    private static final int COLOR_SIN_SECCION = Color.parseColor("#F5F5F5");
 
     private final List<Producto> datos = new ArrayList<>();
     private final Listener listener;
@@ -48,28 +53,41 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.VH> {
         Producto p = datos.get(position);
 
         h.tvNombre.setText(p.getNombre());
-        h.tvSeccion.setText(p.getSeccion() == null ? "—" : p.getSeccion());
         h.tvSupermercado.setText(p.getSupermercado() == null ? "—" : p.getSupermercado());
+        h.tvSeccion.setText(p.getSeccion() == null ? "—" : p.getSeccion());
+
+        // Celda de sección: degradado elegido por el usuario y letra blanca/negra calculada
+        if (p.getIdSeccion() > 0) {
+            h.tvSeccion.setBackground(ColorUtil.degradado(
+                    p.getColorInicio(), p.getColorFin(), 0f));
+            h.tvSeccion.setTextColor(p.getColorFuente());
+        } else {
+            h.tvSeccion.setBackgroundColor(COLOR_SIN_SECCION);
+            h.tvSeccion.setTextColor(COLOR_TEXTO);
+        }
 
         // Evita disparar el listener al reciclar vistas
         h.cbComprar.setOnCheckedChangeListener(null);
         h.cbComprar.setChecked(p.isComprar());
-        aplicarTachado(h, p.isComprar());
+        aplicarColorFila(h, p.isComprar());
 
         h.cbComprar.setOnCheckedChangeListener((btn, checked) -> {
-            aplicarTachado(h, checked);
+            aplicarColorFila(h, checked);
             listener.onComprarCambiado(p, checked);
         });
         h.itemView.setOnClickListener(v -> listener.onEditar(p));
         h.btnEliminar.setOnClickListener(v -> listener.onEliminar(p));
     }
 
-    private void aplicarTachado(VH h, boolean tachado) {
-        int flag = tachado
-                ? (h.tvNombre.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG)
-                : (h.tvNombre.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-        h.tvNombre.setPaintFlags(flag);
-        h.tvNombre.setAlpha(tachado ? 0.5f : 1f);
+    /**
+     * Marcado = por comprar: fondo verde y texto blanco.
+     * Desmarcado = ya comprado: colores predeterminados.
+     */
+    private void aplicarColorFila(VH h, boolean porComprar) {
+        h.rowRoot.setBackgroundColor(porComprar ? COLOR_FILA_PENDIENTE : COLOR_FILA_NORMAL);
+        int texto = porComprar ? Color.WHITE : COLOR_TEXTO;
+        h.tvNombre.setTextColor(texto);
+        h.tvSupermercado.setTextColor(texto);
     }
 
     @Override
@@ -78,15 +96,17 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.VH> {
     }
 
     static class VH extends RecyclerView.ViewHolder {
-        final TextView tvNombre, tvSeccion, tvSupermercado;
+        final View rowRoot;
+        final TextView tvNombre, tvSupermercado, tvSeccion;
         final CheckBox cbComprar;
         final ImageButton btnEliminar;
 
         VH(@NonNull View v) {
             super(v);
+            rowRoot = v.findViewById(R.id.rowRoot);
             tvNombre = v.findViewById(R.id.tvNombre);
-            tvSeccion = v.findViewById(R.id.tvSeccion);
             tvSupermercado = v.findViewById(R.id.tvSupermercado);
+            tvSeccion = v.findViewById(R.id.tvSeccion);
             cbComprar = v.findViewById(R.id.cbComprar);
             btnEliminar = v.findViewById(R.id.btnEliminar);
         }

@@ -6,6 +6,10 @@
         android:title="@string/gestionar_secciones"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_marcar"
+        android:title="@string/marcar_todos"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_desmarcar"
         android:title="@string/desmarcar_todos"
         app:showAsAction="never" />

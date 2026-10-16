@@ -9,19 +9,23 @@
     <string name="col_comprar">Comprar</string>
 
     <string name="todas_secciones">Todas las secciones</string>
+    <string name="todos_supermercados">Todos los supermercados</string>
     <string name="sin_seccion">(Sin sección)</string>
     <string name="sin_resultados">No hay productos que mostrar.\nPulsa + para añadir uno.</string>
-    <string name="resumen">%1$d productos · %2$d por comprar</string>
+    <string name="resumen">%1$d por comprar · %2$d ya comprados</string>
 
-    <string name="gestionar_secciones">Secciones y supermercados</string>
-    <string name="desmarcar_todos">Desmarcar todos</string>
-    <string name="todos_desmarcados">Todos los productos desmarcados</string>
+    <string name="gestionar_secciones">Secciones</string>
+    <string name="desmarcar_todos">Desmarcar todos (ya comprados)</string>
+    <string name="marcar_todos">Marcar todos para comprar</string>
+    <string name="todos_desmarcados">Todos los productos marcados como comprados</string>
+    <string name="todos_marcados">Todos los productos marcados para comprar</string>
 
     <string name="nuevo_producto">Nuevo producto</string>
     <string name="editar_producto">Editar producto</string>
     <string name="eliminar_producto">Eliminar producto</string>
     <string name="confirmar_eliminar">¿Eliminar \"%1$s\" de la lista?</string>
     <string name="hint_nombre">Nombre del producto</string>
+    <string name="hint_supermercado">Supermercado (escribe uno nuevo o elige uno)</string>
     <string name="etiqueta_comprar">Marcar para comprar</string>
     <string name="nombre_obligatorio">Escribe el nombre del producto</string>
 
@@ -29,8 +33,11 @@
     <string name="editar_seccion">Editar sección</string>
     <string name="eliminar_seccion">Eliminar sección</string>
     <string name="confirmar_eliminar_seccion">¿Eliminar \"%1$s\"? Los productos asociados quedarán sin sección.</string>
-    <string name="hint_seccion">Sección (p. ej. Frutería)</string>
-    <string name="hint_supermercado">Supermercado (p. ej. Mercadona)</string>
+    <string name="hint_seccion">Nombre de la sección (p. ej. Frutería)</string>
+    <string name="color_inicio">Color de inicio del degradado</string>
+    <string name="color_fin">Color de fin del degradado</string>
+    <string name="vista_previa">Vista previa</string>
+    <string name="nota_color_fuente">El color de la letra (blanco o negro) se elige solo para que se lea bien sobre el fondo.</string>
     <string name="campo_obligatorio">Campo obligatorio</string>
     <string name="sin_secciones">No hay secciones.\nPulsa + para crear una.</string>
 

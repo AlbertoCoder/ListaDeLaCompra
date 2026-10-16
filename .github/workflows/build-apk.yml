@@ -6,6 +6,8 @@ on:
 
 jobs:
   build:
+    # Fijado a 24.04 para no cambiar de versión de Ubuntu sin avisar
+    # (ubuntu-latest pasa a Ubuntu 26 el 19/10/2026).
     runs-on: ubuntu-24.04
 
     steps:
@@ -18,9 +20,12 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # El runner ya incluye el Android SDK (ANDROID_HOME), así que no hace falta
+      # la acción android-actions/setup-android.
       - name: Install SDK platform and build tools
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
+          # sdkmanager no siempre está en el PATH del runner: lo buscamos dentro del SDK
           SDKMANAGER=$(find "$ANDROID_HOME" -path '*cmdline-tools*' -name sdkmanager -type f | head -n 1)
           if [ -z "$SDKMANAGER" ]; then
             echo "No se encontró sdkmanager en $ANDROID_HOME"

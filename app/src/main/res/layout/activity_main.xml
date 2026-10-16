@@ -31,25 +31,39 @@
                 android:orientation="horizontal">
 
                 <Spinner
+                    android:id="@+id/spSupermercado"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1" />
+
+                <Spinner
                     android:id="@+id/spSeccion"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <Spinner
                     android:id="@+id/spEstado"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1" />
-            </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvResumen"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="4dp"
-                android:textColor="#666666"
-                android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tvResumen"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingStart="8dp"
+                    android:textColor="#666666"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Cabecera de la tabla -->
@@ -75,7 +89,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="@string/col_seccion"
+                android:text="@string/col_supermercado"
                 android:textColor="@color/verde_oscuro"
                 android:textStyle="bold" />
 
@@ -83,7 +97,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="@string/col_supermercado"
+                android:text="@string/col_seccion"
                 android:textColor="@color/verde_oscuro"
                 android:textStyle="bold" />
 
